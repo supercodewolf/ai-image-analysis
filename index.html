@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Image Analysis - 智能图像分析</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-brand">
+                <div class="logo">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <rect width="18" height="18" x="3" y="3" rx="2" ry="2"/>
+                        <circle cx="9" cy="9" r="2"/>
+                        <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>
+                    </svg>
+                </div>
+                <div class="brand-text">
+                    <h1>图像分析</h1>
+                    <span>AI驱动的智能图像理解</span>
+                </div>
+            </div>
+            
+            <button class="btn-settings" id="settingsBtn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M12 1v6m0 6v6m11-7h-6m-6 0H1m18.07-4.93l-4.24 4.24m-5.66 5.66L4.93 19.07m14.14 0l-4.24-4.24m-5.66-5.66L4.93 4.93"/>
+                </svg>
+                设置
+            </button>
+        </header>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Upload Section -->
+            <section class="upload-section">
+                <div class="upload-zone" id="uploadZone">
+                    <input type="file" id="fileInput" hidden accept="image/*">
+                    
+                    <div class="upload-placeholder" id="uploadPlaceholder">
+                        <div class="upload-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                <polyline points="17 8 12 3 7 8"/>
+                                <line x1="12" y1="3" x2="12" y2="15"/>
+                            </svg>
+                        </div>
+                        <h3>拖拽图片到这里</h3>
+                        <p>或点击选择文件</p>
+                        <div class="upload-hint">
+                            <span>支持 JPG, PNG, GIF, WebP</span>
+                            <span class="separator">|</span>
+                            <span>Ctrl+V 粘贴</span>
+                        </div>
+                    </div>
+                    
+                    <div class="image-preview" id="imagePreview">
+                        <img id="previewImage" alt="预览">
+                        <div class="preview-overlay">
+                            <button class="btn-reupload" id="reuploadBtn">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                    <polyline points="17 8 12 3 7 8"/>
+                                    <line x1="12" y1="3" x2="12" y2="15"/>
+                                </svg>
+                                重新上传
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Analysis Options -->
+                <div class="analysis-options">
+                    <h4>分析选项</h4>
+                    <div class="options-grid">
+                        <label class="option-item">
+                            <input type="checkbox" id="optDescription" checked>
+                            <span class="checkmark"></span>
+                            <span>图像描述</span>
+                        </label>
+                        <label class="option-item">
+                            <input type="checkbox" id="optTags" checked>
+                            <span class="checkmark"></span>
+                            <span>关键词标签</span>
+                        </label>
+                        <label class="option-item">
+                            <input type="checkbox" id="optColors">
+                            <span class="checkmark"></span>
+                            <span>颜色分析</span>
+                        </label>
+                        <label class="option-item">
+                            <input type="checkbox" id="optOCR">
+                            <span class="checkmark"></span>
+                            <span>文字识别</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <!-- Analyze Button -->
+                <button class="btn-analyze" id="analyzeBtn" disabled>
+                    <svg class="icon-analyze" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="m21 21-4.3-4.3"/>
+                    </svg>
+                    <svg class="icon-loading" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <path d="M12 6v6l4 2"/>
+                    </svg>
+                    <span>开始分析</span>
+                </button>
+            </section>
+            
+            <!-- Results Section -->
+            <section class="results-section" id="resultsSection">
+                <div class="results-placeholder" id="resultsPlaceholder">
+                    <div class="placeholder-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
+                            <circle cx="12" cy="12" r="3"/>
+                        </svg>
+                    </div>
+                    <h3>分析结果</h3>
+                    <p>上传图片后，这里将显示AI分析结果</p>
+                </div>
+                
+                <div class="results-content" id="resultsContent">
+                    <!-- Description Card -->
+                    <div class="result-card" id="descriptionCard">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
+                                    <circle cx="12" cy="12" r="3"/>
+                                </svg>
+                            </div>
+                            <h4>图像描述</h4>
+                            <button class="btn-copy" data-target="descriptionText" title="复制">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/>
+                                    <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <p id="descriptionText">-</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Tags Card -->
+                    <div class="result-card" id="tagsCard">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M12 2H2v10l9.29 9.29c.94.94 2.48.94 3.42 0l6.58-6.58c.94-.94.94-2.48 0-3.42L12 2Z"/>
+                                    <path d="M7 7h.01"/>
+                                </svg>
+                            </div>
+                            <h4>关键词标签</h4>
+                            <button class="btn-copy" data-target="tagsList" title="复制">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/>
+                                    <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <div class="tags-list" id="tagsList">-</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Colors Card -->
+                    <div class="result-card" id="colorsCard">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="13.5" cy="6.5" r="0.5"/>
+                                    <circle cx="17.5" cy="10.5" r="0.5"/>
+                                    <circle cx="8.5" cy="7.5" r="0.5"/>
+                                    <circle cx="6.5" cy="12.5" r="0.5"/>
+                                    <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.555C21.965 6.012 17.461 2 12 2z"/>
+                                </svg>
+                            </div>
+                            <h4>颜色分析</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="colors-list" id="colorsList">-</div>
+                        </div>
+                    </div>
+                    
+                    <!-- OCR Card -->
+                    <div class="result-card" id="ocrCard">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M4 7V4h16v3"/>
+                                    <path d="M9 20h6"/>
+                                    <path d="M12 4v16"/>
+                                </svg>
+                            </div>
+                            <h4>文字识别 (OCR)</h4>
+                            <button class="btn-copy" data-target="ocrText" title="复制">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/>
+                                    <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <p id="ocrText">-</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Image Info Card -->
+                    <div class="result-card" id="infoCard">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <path d="M12 16v-4"/>
+                                    <path d="M12 8h.01"/>
+                                </svg>
+                            </div>
+                            <h4>图片信息</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="info-grid" id="infoGrid">
+                                <div class="info-item">
+                                    <span class="info-label">文件名</span>
+                                    <span class="info-value" id="infoName">-</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">格式</span>
+                                    <span class="info-value" id="infoFormat">-</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">尺寸</span>
+                                    <span class="info-value" id="infoSize">-</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">大小</span>
+                                    <span class="info-value" id="infoFileSize">-</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+        
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Powered by AI Vision Technology</p>
+        </footer>
+    </div>
+    
+    <!-- Settings Modal -->
+    <div class="modal-overlay" id="settingsModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>API 设置</h2>
+                <button class="close-btn" id="closeSettings">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="setting-group">
+                    <label>API 服务商</label>
+                    <select id="providerSelect">
+                        <optgroup label="国际服务商">
+                            <option value="openai">OpenAI</option>
+                            <option value="azure">Azure OpenAI</option>
+                        </optgroup>
+                        <optgroup label="国内服务商">
+                            <option value="zhipu">智谱 AI (GLM-4V)</option>
+                            <option value="aliyun">阿里通义千问 (Qwen-VL)</option>
+                            <option value="baidu">百度文心一言</option>
+                            <option value="volcengine">火山引擎 (豆包)</option>
+                        </optgroup>
+                    </select>
+                </div>
+                <div class="setting-group">
+                    <label>API 端点</label>
+                    <input type="text" id="apiEndpoint" placeholder="选择服务商后自动填充">
+                </div>
+                <div class="setting-group">
+                    <label>API Key</label>
+                    <input type="password" id="apiKey" placeholder="输入你的 API Key">
+                    <p class="setting-hint">需要支持视觉理解的模型</p>
+                </div>
+                <div class="setting-group">
+                    <label>模型</label>
+                    <select id="modelSelect">
+                        <option value="gpt-4o">GPT-4o</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-primary" id="saveSettings">保存设置</button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="app.js"></script>
+</body>
+</html>
